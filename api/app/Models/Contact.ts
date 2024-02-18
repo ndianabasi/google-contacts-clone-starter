@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, beforeCreate } from '@ioc:Adonis/Lucid/Orm'
-import {cuid} from '@ioc:Adonis/Core/Helpers'
+import { cuid } from '@ioc:Adonis/Core/Helpers'
+import { attachment, AttachmentContract } from '@ioc:Adonis/Addons/AttachmentLite'
 
 export default class Contact extends BaseModel {
   public static selfAssignPrimaryKey = true
@@ -8,7 +9,7 @@ export default class Contact extends BaseModel {
   @column({ isPrimary: true })
   public id: string
 
-  @column()
+  @column({ serializeAs: 'firstName' })
   public firstName: string
 
   @column()
@@ -17,7 +18,7 @@ export default class Contact extends BaseModel {
   @column()
   public company?: string | null | undefined
 
-  @column()
+  @column({ serializeAs: 'jobTitle' })
   public jobTitle?: string | null | undefined
 
   @column()
@@ -26,25 +27,25 @@ export default class Contact extends BaseModel {
   @column()
   public email2?: string | null | undefined
 
-  @column()
+  @column({ serializeAs: 'phoneNumber1' })
   public phoneNumber1: string
 
-  @column()
+  @column({ serializeAs: 'phoneNumber2' })
   phoneNumber2?: string | null | undefined
 
   @column()
   public country?: string | null | undefined
 
-  @column()
+  @column({ serializeAs: 'streetAddressLine1' })
   public streetAddressLine1?: string | null | undefined
-  
-  @column()
+
+  @column({ serializeAs: 'streetAddressLine2' })
   public streetAddressLine2?: string | null | undefined
 
   @column()
   public city?: string | null | undefined
 
-  @column()
+  @column({ serializeAs: 'postCode' })
   public postCode?: string | null | undefined
 
   @column()
@@ -53,19 +54,27 @@ export default class Contact extends BaseModel {
   // @column()
   // public birthday?: string | null | undefined
 
-  @column.date({autoCreate: false, autoUpdate: false})
+  @column.date({ autoCreate: false, autoUpdate: false })
   public birthday?: DateTime | null | undefined
-  
+
   @column()
   public website?: string | null | undefined
 
   @column()
   public notes?: string | null | undefined
 
-  @column.dateTime({ autoCreate: true })
+  @attachment({
+    disk: 'local',
+    folder: 'avatars',
+    preComputeUrl: true,
+    serializeAs: 'profilePicture',
+  })
+  public profilePicture?: AttachmentContract | null
+
+  @column.dateTime({ autoCreate: true, serializeAs: 'createdAt' })
   public createdAt: DateTime
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  @column.dateTime({ autoCreate: true, autoUpdate: true, serializeAs: 'updatedAt' })
   public updatedAt: DateTime
 
   /**
@@ -73,11 +82,10 @@ export default class Contact extends BaseModel {
    */
   @beforeCreate()
   public static generateUUID(contact: Contact): void {
-
     /**
      * This is a static method to generate a random ID
      * for the `id` column
-     * 
+     *
      * `cuid()` returns a collision-resistant unique ID
      */
     contact.id = cuid()

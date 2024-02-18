@@ -2,6 +2,8 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Contact from 'App/Models/Contact'
 import ContactValidator from 'App/Validators/ContactValidator'
 import Logger from '@ioc:Adonis/Core/Logger'
+import { Attachment } from '@ioc:Adonis/Addons/AttachmentLite'
+
 export default class ContactsController {
   /**
    * method for GET request
@@ -13,7 +15,17 @@ export default class ContactsController {
       const { page, perPage } = request.qs()
 
       const contacts = await Contact.query()
-        .select(['id', 'first_name', 'surname', 'email1', 'phone_number1', 'company', 'job_title'])
+        .select([
+          'id',
+          'first_name',
+          'surname',
+          'email1',
+          'phone_number1',
+          'company',
+          'job_title',
+          'profile_picture',
+        ])
+        .orderBy('first_name', 'asc')
         .paginate(page, perPage)
 
       return response.ok({ data: contacts })
@@ -21,7 +33,7 @@ export default class ContactsController {
       Logger.error('Error at ContactsController.list:\n%o', error)
 
       return response.status(error?.status ?? 500).json({
-        message: 'An error occurred while deleting the contact.',
+        message: 'An error occurred while fetching the contacts.',
         error: process.env.NODE_ENV !== 'production' ? error : null,
       })
     }
@@ -74,6 +86,7 @@ export default class ContactsController {
         birthday,
         website,
         notes,
+        profilePicture,
       } = payload
 
       /**
@@ -97,6 +110,7 @@ export default class ContactsController {
         birthday,
         website,
         notes,
+        profilePicture: profilePicture ? Attachment.fromFile(profilePicture) : null,
       })
 
       /**
@@ -109,9 +123,9 @@ export default class ContactsController {
 
       await contact.refresh()
 
-      return response.created(contact)
+      return response.created({ message: 'Contact was created.', data: contact.id })
     } catch (error) {
-      Logger.error('Error at ContactsContreoller.store:\n%o', error)
+      Logger.error('Error at ContactsController.store:\n%o', error)
 
       return response.status(error?.status ?? 500).json({
         message: 'An error occured while creating the contact.',
@@ -165,6 +179,7 @@ export default class ContactsController {
         birthday,
         website,
         notes,
+        profilePicture,
       } = payload!
 
       requestedContact?.merge({
@@ -185,12 +200,13 @@ export default class ContactsController {
         birthday,
         website,
         notes,
+        profilePicture: profilePicture ? Attachment.fromFile(profilePicture) : null,
       })
 
       await requestedContact?.save()
       await requestedContact?.refresh()
 
-      return response.created({ message: 'Contact was edited', data: requestedContact })
+      return response.created({ message: 'Contact was edited', data: requestedContact?.id })
     } catch (error) {
       Logger.error('Error at ContactsController.update:\n%o', error)
 
