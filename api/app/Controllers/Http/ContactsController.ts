@@ -104,7 +104,63 @@ export default class ContactsController {
   /**
    * ###
    */
-  public async update({}: HttpContextContract) {}
+  public async update({ request, response, requestedContact }: HttpContextContract) {
+    try {
+      const payload = await request.validate(ContactValidator)
+
+      const {
+        firstName,
+        surname,
+        company,
+        jobTitle,
+        email1,
+        email2,
+        phoneNumber1,
+        phoneNumber2,
+        country,
+        streetAddressLine1,
+        streetAddressLine2,
+        city,
+        postCode,
+        state,
+        birthday,
+        website,
+        notes,
+      } = payload!
+
+      requestedContact?.merge({
+        firstName,
+        surname,
+        company,
+        jobTitle,
+        email1,
+        email2,
+        phoneNumber1,
+        phoneNumber2,
+        country,
+        streetAddressLine1,
+        streetAddressLine2,
+        city,
+        postCode,
+        state,
+        birthday,
+        website,
+        notes,
+      })
+
+      await requestedContact?.save()
+      await requestedContact?.refresh()
+
+      return response.created({ message: 'Contact was edited', data: requestedContact })
+    } catch (error) {
+      Logger.error('Error at ContactsController.update:\n%o', error)
+
+      return response.status(error?.status ?? 500).json({
+        message: 'An error occurred while updating the contact.',
+        error: process.env.NODE_ENV !== 'production' ? error : null,
+      })
+    }
+  }
 
   /**
    * ###
