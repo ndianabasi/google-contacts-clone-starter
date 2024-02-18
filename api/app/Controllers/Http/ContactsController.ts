@@ -87,7 +87,7 @@ export default class ContactsController {
 
       return response.created(contact)
     } catch (error) {
-      Logger.error('Error at ContactsContreoller.store:\n%0', error)
+      Logger.error('Error at ContactsContreoller.store:\n%o', error)
 
       return response.status(error?.status ?? 500).json({
         message: 'An error occured while creating the contact.',
@@ -99,7 +99,18 @@ export default class ContactsController {
   /**
    * ###
    */
-  public async show({}: HttpContextContract) {}
+  public async show({ response, requestedContact }: HttpContextContract) {
+    try {
+      return response.ok({ data: requestedContact })
+    } catch (error) {
+      Logger.error('Error at ContactsController.show:\n%o', error)
+
+      return response.status(error?.status ?? 500).json({
+        message: 'An error occurred while deleting the contact.',
+        error: process.env.NODE_ENV !== 'production' ? error : null,
+      })
+    }
+  }
 
   /**
    * ###
@@ -165,5 +176,18 @@ export default class ContactsController {
   /**
    * ###
    */
-  public async destroy({}: HttpContextContract) {}
+  public async destroy({ response, requestedContact }: HttpContextContract) {
+    try {
+      await requestedContact?.delete()
+
+      return response.created({ message: 'Contact was deleted', data: requestedContact?.id })
+    } catch (error) {
+      Logger.error('Error at ContactController.destro:\n%o', error)
+
+      return response.status(error?.status ?? 500).json({
+        message: 'An error occured whiles deleting the contact.',
+        error: process.env.NODE_ENV !== 'production' ? error : null,
+      })
+    }
+  }
 }

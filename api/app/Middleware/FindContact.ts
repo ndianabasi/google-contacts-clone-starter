@@ -11,8 +11,15 @@ export default class FindContact {
       return response.badRequest({ message: 'Contact ID not provided' })
     }
 
-    const contact = await Contact.findOrFail(id)
-    if (!contact) {
+    // const contact = await Contact.findOrFail(id)
+    // if (!contact) {
+    //   return response.notFound({ message: 'Unknown contact was requested' })
+    // }
+
+    let contact: Contact
+    try {
+      contact = await Contact.findOrFail(id)
+    } catch (error) {
       return response.notFound({ message: 'Unknown contact was requested' })
     }
 
