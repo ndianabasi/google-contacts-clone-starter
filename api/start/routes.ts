@@ -53,3 +53,8 @@ Route.get('/contacts/:id', 'ContactsController.show').middleware(['findContact']
  * Delete an existing contact
  */
 Route.delete('contacts/:id', 'ContactsController.destroy').middleware(['findContact'])
+
+/**
+ * Fetch users via pagisntion
+ */
+Route.get('/contacts', 'ContactsController.index')

@@ -3,10 +3,34 @@ import Contact from 'App/Models/Contact'
 import ContactValidator from 'App/Validators/ContactValidator'
 import Logger from '@ioc:Adonis/Core/Logger'
 export default class ContactsController {
-  public async index({}: HttpContextContract) {}
+  /**
+   * method for GET request
+   *
+   * Fetch contacts via pagination
+   */
+  public async index({ request, response }: HttpContextContract) {
+    try {
+      const { page, perPage } = request.qs()
+
+      const contacts = await Contact.query()
+        .select(['id', 'first_name', 'surname', 'email1', 'phone_number1', 'company', 'job_title'])
+        .paginate(page, perPage)
+
+      return response.ok({ data: contacts })
+    } catch (error) {
+      Logger.error('Error at ContactsController.list:\n%o', error)
+
+      return response.status(error?.status ?? 500).json({
+        message: 'An error occurred while deleting the contact.',
+        error: process.env.NODE_ENV !== 'production' ? error : null,
+      })
+    }
+  }
 
   /**
    * method for POST request
+   *
+   * Create a new contact
    */
   public async store({ request, response }: HttpContextContract) {
     // const payload = request.body();
@@ -97,7 +121,9 @@ export default class ContactsController {
   }
 
   /**
-   * ###
+   * method for GET request
+   *
+   * Fetch a contact by ID
    */
   public async show({ response, requestedContact }: HttpContextContract) {
     try {
@@ -113,7 +139,9 @@ export default class ContactsController {
   }
 
   /**
-   * ###
+   * method for PUT request
+   *
+   * Update a contact by ID
    */
   public async update({ request, response, requestedContact }: HttpContextContract) {
     try {
@@ -174,7 +202,9 @@ export default class ContactsController {
   }
 
   /**
-   * ###
+   * method for DELETE request
+   *
+   * Delete a contact by ID
    */
   public async destroy({ response, requestedContact }: HttpContextContract) {
     try {
