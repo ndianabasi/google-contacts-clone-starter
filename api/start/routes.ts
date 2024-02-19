@@ -20,6 +20,7 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 import HealthCheck from '@ioc:Adonis/Core/HealthCheck'
+import './routes/contacts'
 
 Route.get('/', async () => {
   return { hello: 'world' }
@@ -33,28 +34,3 @@ Route.get('health', async ({ response }) => {
 
   return report.healthy ? response.ok(report) : response.badRequest(report)
 })
-
-/**
- * Create a new contact
- */
-Route.post('/contacts', 'ContactsController.store')
-
-/**
- * Edit an existing contact
- */
-Route.put('/contacts/:id', 'ContactsController.update').middleware(['findContact'])
-
-/**
- * Fetch an existing contact
- */
-Route.get('/contacts/:id', 'ContactsController.show').middleware(['findContact'])
-
-/**
- * Delete an existing contact
- */
-Route.delete('contacts/:id', 'ContactsController.destroy').middleware(['findContact'])
-
-/**
- * Fetch users via pagisntion
- */
-Route.get('/contacts', 'ContactsController.index')
