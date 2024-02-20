@@ -1,0 +1,45 @@
+# OPEN API SPEC API TESTS
+
+# api-spec.yml
+
+openapi: 3.0.0
+info:
+  title: Google Contacts Clone
+  description: 'API spec for google-contacts-clone app'
+  version: 1.0.0
+tags:
+  - name: 'Contacts'
+paths:
+  /contacts:
+    get:
+      tags: Contacts
+      summary: Get a paginated list of contacts
+      parameters:
+        - in: query
+          name: perPage
+          description: Number of contacts per page
+          required: false
+          schema:
+            type: number
+        - in: query
+          name: page
+          description: Page number
+          required: false
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                data:
+                  meta:
+                    per_page: 5
+                    current_page: 3
+                    last_page: 25
+                    first_page: 1
+                    first_page_url: '/?page=1'
+                    next_page_url: '/?page=4'
+                    previous_page_url: '/?page=2'
+                  data: []

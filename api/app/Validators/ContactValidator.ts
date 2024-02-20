@@ -58,7 +58,7 @@ export default class ContactValidator {
      * with `@column.date` decorator so that Lucid can automatically fetch the
      * `Date` object from the Luxon `DateTime` object before saving.
      */
-    birthday: schema.date.optional({ format: 'yyyy-mm-dd' }, [rules.before('today')]),
+    birthday: schema.date.optional({ format: 'yyyy-MM-dd' }, [rules.before('today')]),
     website: schema.string.optional({ trim: true }, [
       rules.url({
         protocols: ['http', 'https'],
@@ -92,6 +92,7 @@ export default class ContactValidator {
     'email1.email': 'Email 1 should be a valid email address.',
     'email1.unique': 'Email 1 is already registered in your contacts.',
     'email2.email': 'Email 2 should be a valid email address.',
+    'phoneNumber1.required': 'Phone number 1 is required',
     'phoneNumber1.maxLength':
       'Phone Number 1 should be maximum of {{options.maxLength}} characters.',
     'phoneNumber2.maxLength':

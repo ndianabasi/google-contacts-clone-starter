@@ -228,7 +228,7 @@ export default class ContactsController {
 
       return response.created({ message: 'Contact was deleted', data: requestedContact?.id })
     } catch (error) {
-      Logger.error('Error at ContactController.destro:\n%o', error)
+      Logger.error('Error at ContactController.destroy:\n%o', error)
 
       return response.status(error?.status ?? 500).json({
         message: 'An error occured whiles deleting the contact.',

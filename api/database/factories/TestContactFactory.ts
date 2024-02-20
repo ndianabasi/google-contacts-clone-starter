@@ -2,8 +2,10 @@ import Contact from 'App/Models/Contact'
 import Factory from '@ioc:Adonis/Lucid/Factory'
 import { DateTime } from 'luxon'
 
-const ContactFactory = Factory.define(Contact, async ({ faker }) => {
-  const firstName = faker.name.firstName(faker.random.arrayElement([0, 1]))
+export default Factory.define(Contact, ({ faker }) => {
+  return {
+    
+    const firstName = faker.name.firstName(faker.random.arrayElement([0, 1]))
   const surname = faker.name.lastName()
   const omitAddress = faker.datatype.boolean()
 
@@ -43,6 +45,5 @@ const ContactFactory = Factory.define(Contact, async ({ faker }) => {
       return omit ? null : faker.lorem.paragraphs(faker.random.arrayElement([1, 2]))
     })(),
   }
+  }
 }).build()
-
-export default ContactFactory

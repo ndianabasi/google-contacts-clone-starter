@@ -46,6 +46,12 @@ export const reporters: Required<Config>['reporters'] = [specReporter()]
 | within the runner hooks
 |
 */
+/**
+ * added a runner hook to migrate DB before every test and roll back migration
+ * after each test
+ *
+ * `setup: [() => TestUtils.db().migrate()]`
+ */
 export const runnerHooks: Pick<Required<Config>, 'setup' | 'teardown'> = {
   setup: [() => TestUtils.ace().loadCommands()],
   teardown: [],
